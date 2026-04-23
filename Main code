@@ -1,14 +1,13 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 abstract class Patient {
     private String name;
     private int severity;
-    private int age;
 
-    public Patient(String name, int severity, int age) {
+    public Patient(String name, int severity) {
         this.name = name;
         this.severity = severity;
-        this.age = age;
     }
 
     public String getName() {
@@ -19,31 +18,16 @@ abstract class Patient {
         return severity;
     }
 
-    public int getAge() {
-        return age;
-    }
-
     abstract int getPriority();
 
-    public String getEmergencyLevel() {
-        int p = getPriority();
-        if (p >= 10) return "RED (Critical)";
-        else if (p >= 6) return "YELLOW (Moderate)";
-        else return "GREEN (Low)";
-    }
-
-    public void display() {
-        System.out.println("Name: " + name +
-                " | Severity: " + severity +
-                " | Age: " + age +
-                " | Priority: " + getPriority() +
-                " | Level: " + getEmergencyLevel());
+    public void showInfo() {
+        System.out.println("Name: " + name + " | Severity: " + severity + " | Priority: " + getPriority());
     }
 }
 
 class NormalPatient extends Patient {
-    public NormalPatient(String name, int severity, int age) {
-        super(name, severity, age);
+    public NormalPatient(String name, int severity) {
+        super(name, severity);
     }
 
     int getPriority() {
@@ -52,8 +36,8 @@ class NormalPatient extends Patient {
 }
 
 class CriticalPatient extends Patient {
-    public CriticalPatient(String name, int severity, int age) {
-        super(name, severity, age);
+    public CriticalPatient(String name, int severity) {
+        super(name, severity);
     }
 
     int getPriority() {
@@ -62,8 +46,8 @@ class CriticalPatient extends Patient {
 }
 
 class VIPPatient extends Patient {
-    public VIPPatient(String name, int severity, int age) {
-        super(name, severity, age);
+    public VIPPatient(String name, int severity) {
+        super(name, severity);
     }
 
     int getPriority() {
@@ -72,44 +56,55 @@ class VIPPatient extends Patient {
 }
 
 class Hospital {
-    private List<Patient> patients = new ArrayList<>();
+    private ArrayList<Patient> list = new ArrayList<>();
 
     public void addPatient(Patient p) {
-        patients.add(p);
+        list.add(p);
     }
 
-    public void showAllPatients() {
-        for (Patient p : patients) {
-            p.display();
+    public void showPatients() {
+        if (list.size() == 0) {
+            System.out.println("No patients available.");
+            return;
+        }
+
+        for (Patient p : list) {
+            p.showInfo();
         }
     }
 
-    public void sortByPriority() {
-        patients.sort((a, b) -> b.getPriority() - a.getPriority());
-    }
+    public void treatPatient() {
+        if (list.size() == 0) {
+            System.out.println("No patients to treat.");
+            return;
+        }
 
-    public Patient treatNext() {
-        sortByPriority();
-        if (patients.isEmpty()) return null;
-        return patients.remove(0);
-    }
+        Patient highest = list.get(0);
 
-    public boolean isEmpty() {
-        return patients.isEmpty();
+        for (Patient p : list) {
+            if (p.getPriority() > highest.getPriority()) {
+                highest = p;
+            }
+        }
+
+        System.out.println("\nTreating Patient:");
+        highest.showInfo();
+        list.remove(highest);
     }
 }
 
 public class Main {
     public static void main(String[] args) {
+
         Scanner sc = new Scanner(System.in);
         Hospital hospital = new Hospital();
 
         while (true) {
             System.out.println("\n1. Add Patient");
-            System.out.println("2. Show All Patients");
-            System.out.println("3. Treat Next Patient");
+            System.out.println("2. Show Patients");
+            System.out.println("3. Treat Patient");
             System.out.println("4. Exit");
-            System.out.print("Choose: ");
+            System.out.print("Choose option: ");
 
             int choice = sc.nextInt();
 
@@ -120,39 +115,32 @@ public class Main {
                 System.out.print("Enter Severity (1-10): ");
                 int severity = sc.nextInt();
 
-                System.out.print("Enter Age: ");
-                int age = sc.nextInt();
-
                 System.out.println("Type: 1.Normal 2.Critical 3.VIP");
                 int type = sc.nextInt();
 
                 Patient p;
 
-                if (type == 2)
-                    p = new CriticalPatient(name, severity, age);
-                else if (type == 3)
-                    p = new VIPPatient(name, severity, age);
-                else
-                    p = new NormalPatient(name, severity, age);
+                if (type == 2) {
+                    p = new CriticalPatient(name, severity);
+                } else if (type == 3) {
+                    p = new VIPPatient(name, severity);
+                } else {
+                    p = new NormalPatient(name, severity);
+                }
 
                 hospital.addPatient(p);
                 System.out.println("Patient Added!");
 
             } else if (choice == 2) {
-                hospital.sortByPriority();
-                hospital.showAllPatients();
+                hospital.showPatients();
 
             } else if (choice == 3) {
-                Patient p = hospital.treatNext();
-                if (p != null) {
-                    System.out.println("Treating Patient:");
-                    p.display();
-                } else {
-                    System.out.println("No patients available.");
-                }
+                hospital.treatPatient();
 
-            } else {
+            } else if (choice == 4) {
                 break;
+            } else {
+                System.out.println("Invalid choice!");
             }
         }
     }
