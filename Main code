@@ -1,0 +1,159 @@
+import java.util.*;
+
+abstract class Patient {
+    private String name;
+    private int severity;
+    private int age;
+
+    public Patient(String name, int severity, int age) {
+        this.name = name;
+        this.severity = severity;
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getSeverity() {
+        return severity;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    abstract int getPriority();
+
+    public String getEmergencyLevel() {
+        int p = getPriority();
+        if (p >= 10) return "RED (Critical)";
+        else if (p >= 6) return "YELLOW (Moderate)";
+        else return "GREEN (Low)";
+    }
+
+    public void display() {
+        System.out.println("Name: " + name +
+                " | Severity: " + severity +
+                " | Age: " + age +
+                " | Priority: " + getPriority() +
+                " | Level: " + getEmergencyLevel());
+    }
+}
+
+class NormalPatient extends Patient {
+    public NormalPatient(String name, int severity, int age) {
+        super(name, severity, age);
+    }
+
+    int getPriority() {
+        return getSeverity();
+    }
+}
+
+class CriticalPatient extends Patient {
+    public CriticalPatient(String name, int severity, int age) {
+        super(name, severity, age);
+    }
+
+    int getPriority() {
+        return getSeverity() + 5;
+    }
+}
+
+class VIPPatient extends Patient {
+    public VIPPatient(String name, int severity, int age) {
+        super(name, severity, age);
+    }
+
+    int getPriority() {
+        return getSeverity() + 3;
+    }
+}
+
+class Hospital {
+    private List<Patient> patients = new ArrayList<>();
+
+    public void addPatient(Patient p) {
+        patients.add(p);
+    }
+
+    public void showAllPatients() {
+        for (Patient p : patients) {
+            p.display();
+        }
+    }
+
+    public void sortByPriority() {
+        patients.sort((a, b) -> b.getPriority() - a.getPriority());
+    }
+
+    public Patient treatNext() {
+        sortByPriority();
+        if (patients.isEmpty()) return null;
+        return patients.remove(0);
+    }
+
+    public boolean isEmpty() {
+        return patients.isEmpty();
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Hospital hospital = new Hospital();
+
+        while (true) {
+            System.out.println("\n1. Add Patient");
+            System.out.println("2. Show All Patients");
+            System.out.println("3. Treat Next Patient");
+            System.out.println("4. Exit");
+            System.out.print("Choose: ");
+
+            int choice = sc.nextInt();
+
+            if (choice == 1) {
+                System.out.print("Enter Name: ");
+                String name = sc.next();
+
+                System.out.print("Enter Severity (1-10): ");
+                int severity = sc.nextInt();
+
+                System.out.print("Enter Age: ");
+                int age = sc.nextInt();
+
+                System.out.println("Type: 1.Normal 2.Critical 3.VIP");
+                int type = sc.nextInt();
+
+                Patient p;
+
+                if (type == 2)
+                    p = new CriticalPatient(name, severity, age);
+                else if (type == 3)
+                    p = new VIPPatient(name, severity, age);
+                else
+                    p = new NormalPatient(name, severity, age);
+
+                hospital.addPatient(p);
+                System.out.println("Patient Added!");
+
+            } else if (choice == 2) {
+                hospital.sortByPriority();
+                hospital.showAllPatients();
+
+            } else if (choice == 3) {
+                Patient p = hospital.treatNext();
+                if (p != null) {
+                    System.out.println("Treating Patient:");
+                    p.display();
+                } else {
+                    System.out.println("No patients available.");
+                }
+
+            } else {
+                break;
+            }
+        }
+    }
+}
