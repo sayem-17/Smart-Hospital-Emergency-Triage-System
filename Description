@@ -1,0 +1,16 @@
+The Smart Hospital Emergency Triage System is a Java-based application designed to simulate how hospitals prioritize patients in emergency situations. 
+The system focuses on analyzing patient conditions and dynamically deciding which patient should receive treatment first.
+In real-world hospitals, not all patients are treated on a first-come, first-served basis. 
+Instead, patients are prioritized based on the severity of their condition, urgency, and other factors. 
+This project replicates that logic using Object-Oriented Programming principles.
+The system allows users to add patients by providing basic information such as name, severity level, age, and patient type (Normal, Critical, or VIP). 
+Based on these inputs, each patient is assigned a priority score. Critical patients receive the highest priority, followed by VIP patients, and then normal patients.
+The application then sorts patients dynamically according to their priority and identifies which patient should be treated first. 
+It also categorizes patients into emergency levels such as RED (Critical), YELLOW (Moderate), and GREEN (Low) for better visualization of urgency.
+This project effectively demonstrates the four core pillars of Object-Oriented Programming:
+Encapsulation is used to protect patient data by keeping attributes private and accessing them through getter methods.
+Abstraction is achieved through the use of an abstract Patient class, which defines the structure for all patient types.
+Inheritance allows different types of patients (Normal, Critical, VIP) to derive from the base class.
+Polymorphism is implemented by overriding the getPriority() method, enabling different behaviors for different patient types.
+Overall, this system is a simple yet powerful simulation of real-world hospital triage, combining human decision-making logic with programming concepts 
+to create an intelligent and dynamic solution.
